@@ -11,7 +11,8 @@ object Main {
     }
     */
 
-    balance("())(".toList)
+    //balance("())(".toList)
+    countChange(4,List(1,2))
   }
 
   /**
@@ -29,7 +30,7 @@ object Main {
     * 1 4 6 4 1
     */
   def pascal(c: Int, r: Int): Int = {
-    if (c == 0 | c == r) 1 else (pascal(c - 1, r - 1) + pascal(c, r - 1))
+    if (c == 0 | c == r) 1 else pascal(c - 1, r - 1) + pascal(c, r - 1)
   }
 
   /**
@@ -53,29 +54,69 @@ object Main {
     * Testing: You can use the toList method to convert from a String to aList[Char]: e.g. "(just an) example".toList.
     */
   def balance(chars: List[Char]): Boolean = {
-    var finalValue = 0
     var total = 0
 
     def controle(chars: List[Char]) {
-      var lettreAChecker = chars.head
+      val lettreAChecker = chars.head
       total += giveValue(lettreAChecker)
-      if (chars.tail.length > 0 & total >= 0) controle(chars.tail)
+      if (chars.tail.nonEmpty & total >= 0) controle(chars.tail)
     }
 
     def giveValue(lettre: Char): Int = {
-      if (lettre == '(') 1 else if (lettre == ')')  -1 else  0
-  }
+      if (lettre == '(') 1 else if (lettre == ')') -1 else 0
+    }
 
     if (chars.isEmpty) {
       false
     } else {
       controle(chars)
-      if(total == 0) true else false
+      if (total == 0) true else false
     }
-}
+  }
 
-/**
-  * Exercise 3
-  */
-def countChange (money: Int, coins: List[Int] ): Int = ???
+  /**
+    * Exercise 3
+    * Write a recursive function that counts how many different ways you can make change for an amount,
+    * given a list of coin denominations. For example, there are 3 ways to give change for 4
+    * if you have coins with denomination 1 and 2: 1+1+1+1, 1+1+2, 2+2.
+    * Hint: Think of the degenerate cases.
+    * How many ways can you give change for 0 CHF(swiss money)?
+    * How many ways can you give change for >0 CHF, if you have no coins?
+    */
+  def countChange(money: Int, coins: List[Int]): Int = {
+    var nbPossibilite = 0
+
+    def calcul(monnaie: Int, coins: List[Int]) {
+      if(coins.nonEmpty) {
+        val reste = monnaie % coins.head // cas où on utilise un type de monnaie au max
+        if (reste == 0 ){
+          nbPossibilite += 1
+          if (coins.tail.length >=1) {
+            calcul(monnaie, coins.tail)
+          }
+        } else {
+          calcul(reste, coins.tail)
+        //  calculAvecReste(monnaie, coins)
+        }
+      }
+     }
+
+ /*   def calculAvecReste(monnaie : Int, coins : List[Int]) : Int = {
+
+         }*/
+
+    if (money == 0 | coins.isEmpty) 0
+    else {
+      if (money % coins.head != 0) {
+        // pour vérifier qu'il est possible de rendre la monnaie vis à vis du type d'argent qu'on a
+        countChange(money, coins.tail)
+      } else { // on peut rendre la monnaie
+        calcul(money, coins)
+        println(nbPossibilite)
+        nbPossibilite
+      }
+
+
+    }
+  }
 }
